@@ -5,8 +5,14 @@ class Users::SessionsController < Devise::SessionsController
 
   private
 
-  def respond_with(resource, _options = {})
-    render json: { message: "Signed in successfully.", user: current_user }, status: :ok
+  def respond_with(resource, _opts = {})
+    user = User.find_by(email: params[:user][:email])
+
+    if user && user.valid_password?(params[:user][:password])
+      render json: { message: "Signed in successfully.", user: user, token: user.generate_jwt }, status: :ok
+    else
+      render json: { errors: { 'email or password' => ['is invalid'] } }, status: :unprocessable_entity
+    end
   end
 
   def respond_to_on_destroy
