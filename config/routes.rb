@@ -7,7 +7,9 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       resources :users, only: %i[show]
-      resources :boards, except: %i[show]
+      resources :boards, except: %i[show] do
+        resources :tasks, except: %i[show]
+      end
     end
   end
 end
